@@ -1,6 +1,8 @@
 function setup() {
     let canvas = createCanvas(850,700);
-	canvas.parent('sketch-holder');
+    canvas.parent('sketch-holder');
+    
+    console.log(tiles);
 }
 
 function draw() {
