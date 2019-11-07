@@ -13,10 +13,7 @@ class Grid {
             arr[i] = [];
 
             for(let j = 0; j < h; j++){
-                //let index = this.getRandom(0, tiles.length);
-                //let tile = tiles[index];
-                //arr[i][j] = tile.id;
-                arr[i][j] = '0';                
+                arr[i][j] = {value: '0', placed : false};                
             }
         }   
 
@@ -31,9 +28,10 @@ class Grid {
         if(x >= this.width || y >= this.width || x < 0 || y < 0)
             return;
 
-        // if(this.matrix[x][y] != '0' && this.matrix[x][y] != '+')
-        //     return;
-
+        let tile = this.matrix[x][y];
+        if(tile.placed) {
+            return;
+        }
         this.matrix[x][y] = value;
     }
 
@@ -44,20 +42,42 @@ class Grid {
     render(s){
         for (let i = 0; i < this.width; i++) {
             for(let j = 0; j < this.height; j++){
-                let v = this.getValue(i,j);
-                if(v === '+'){
-                    fill(40,230,70);        
-                    rect(i*s, j*s, s,s);          
+
+                let tile = this.getValue(i,j);
+                let v = tile.value;
+
+                if(tile.placed)
+                    continue;
+
+                push();
+
+                translate(i*s+s/2, j*s+s/2);
+               
+              
+
+                if(tile.placed){
+                    if(tile.rotation)
+                        rotate(rotation);
+                    image(tileImages[v], 0, 0, s,s); 
+                }else {
+
+                    if(v === '+'){
+                        fill(40,230,70);        
+                        rect(0, 0, s,s);          
+                    }
+                    else if(v === '0') {
+                        fill(75);
+                        rect(0, 0, s,s); 
+                    }
+                    else {
+                        if(rotation != 0)
+                            rotate(rotation);
+                        image(tileImages[v],0, 0, s,s);  
+                    }
+                         
                 }
-                else if(v === '0') {
-                    fill(75);
-                    rect(i*s, j*s, s,s); 
-                }
-                else
-                    image(tileImages[v], i*s, j*s, s,s);    
-                    
-                    
                 
+                pop();
             }
         }   
     }

@@ -1,10 +1,14 @@
 let tileImages = new Object();
 let grid;
-let size = 50;
+let size = 100;
 let canvasWidth = 1200;
 let canvasHeight = 900;
 
-let currentTile = {x:0,y:0};
+let rotation = 0;
+
+let completed = 0;
+
+let currentTilePos = {x:0,y:0};
 let tile = getRandomTile();
 
 function preload() {
@@ -13,6 +17,8 @@ function preload() {
 }
 
 function setup() {
+    rectMode(CENTER);
+    imageMode(CENTER);
     let canvas = createCanvas(canvasWidth+2,canvasHeight+2);
     canvas.parent('sketch-holder');
     
@@ -24,8 +30,9 @@ function setup() {
   
 
 function draw() {
+
     //renderTiles(); 
-    renderGrid();   
+    grid.render(size);
 }
 
 
@@ -50,10 +57,6 @@ function loadTilesImages(){
     }); 
 }
 
-function renderGrid() {
-    grid.render(size);
-}
-
 function renderTiles() {
     let currentX = 0;
     let currentY = 0;
@@ -69,14 +72,13 @@ function renderTiles() {
         }
     });
 
-}
-  
+}  
 
 function mouseClicked() { 
     if(mouseX > width || mouseX < 0 || mouseY > height || mouseY < 0)
         return;
         
-    grid.setValue(currentTile.x, currentTile.y, tile.id);
+    grid.setValue(currentTilePos.x, currentTilePos.y, {value: tile.id, placed : true, rotation : rotation});
     tile = getRandomTile();
 }
 
@@ -87,14 +89,24 @@ function mouseMoved() {
     let x = Math.floor(mouseX / size);
     let y = Math.floor(mouseY / size);
 
-    if(currentTile.x != x || currentTile.y != y){
+    if(currentTilePos.x != x || currentTilePos.y != y){
         // Current tile is another one
-        grid.setValue(currentTile.x, currentTile.y, '0');
+        grid.setValue(currentTilePos.x, currentTilePos.y, {value :'0', placed : false});
     }
     else {
-        grid.setValue(x,y, tile.id);
+        grid.setValue(x,y, {value : tile.id, placed : false});
     }
 
-    currentTile = {x : x, y : y};   
+    currentTilePos = {x : x, y : y};   
+}
+
+function keyTyped(){
+    if (key === 'a') {
+       rotation -= TWO_PI/4;
+      } else if (key === 'd') {
+        rotation += TWO_PI/4;
+      }
+
+      console.log(rotation);
 }
 
