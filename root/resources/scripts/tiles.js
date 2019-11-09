@@ -1,15 +1,17 @@
 // Contains the tile definitions
 
-let tiles = [ 
+let tileDefinitions = [ 
 {
     id : 'A',
     count: 2,
+    shield:false,
     type: ['chapel', 'road'],
     connections: { North : 'field', East : 'field', South : 'road', West : 'field'}
 },
 {
     id : 'B',
     count: 4,
+    shield:false,
     type: ['chapel'],
     connections: { North : 'field', East : 'field', South : 'field', West : 'field'}
 },
@@ -23,12 +25,14 @@ let tiles = [
 {
     id : 'D',
     count: 4, // Includes starting square
+    shield:false,
     types: ['cityedge', 'road'],
     connections: { North : 'road', East : 'cityedge', South : 'road', West : 'field'}
 },
 {
     id : 'E',
     count: 5, 
+    shield:false,
     types: ['cityedge'],
     connections: { North : 'cityedge', East : 'field', South : 'field', West : 'field'}
 },
@@ -42,36 +46,42 @@ let tiles = [
 {
     id : 'G',
     count: 1,
+    shield:false,
     types: ['citycenter'],
     connections: { North : 'citycenter', East : 'field', South : 'field', West : 'citycenter'}
 },
 {
     id : 'H',
     count: 3,
+    shield:false,
     types: ['cityedge'],
     connections: { North : 'cityedge', East : 'field', South : 'field', West : 'cityedge'}
 },
 {
     id : 'I',
     count: 2,
+    shield:false,
     types: ['citycenter'],
     connections: { North : 'citycenter', East : 'field', South : 'field', West : 'citycenter'}
 },
 {
     id : 'J',
     count: 3,
+    shield:false,
     types: ['cityedge', 'road'],
     connections: { North : 'cityedge', East : 'road', South : 'road', West : 'field'}
 },
 {
     id : 'K',
     count: 3,
+    shield:false,
     types: ['cityedge', 'road'],
     connections: { North : 'road', East : 'cityedge', South : 'field' , West : 'road'}
 },
 {
     id : 'L',
     count: 3,
+    shield:false,
     types: ['cityedge', 'road'],
     connections: { North : 'road', East : 'cityedge', South : 'road' , West : 'road'}
 },

@@ -1,84 +1,75 @@
 class Grid {
-    constructor(width, height ) {
+    constructor(width, height) {
         this.height = height;
         this.width = width;
-
-        this.matrix = this._create2DArray(width, height);
+        this.matrix = utils.create2DArray(width, height, { value: '0', placed: false });
     }
 
-    _create2DArray(w,h) {
-        let arr = [];
+   
 
-        for (let i = 0; i < w; i++) {
-            arr[i] = [];
-
-            for(let j = 0; j < h; j++){
-                arr[i][j] = {value: '0', placed : false};                
-            }
-        }   
-
-        return arr;
-    }
-
-    getRandom(min, max){
-        return Math.floor(Math.random() * (max - min) + min); 
-    }
-
-    setValue(x, y, value){
-        if(x >= this.width || y >= this.width || x < 0 || y < 0)
+    setValue(x, y, value) {
+        if (x >= this.width || y >= this.width || x < 0 || y < 0)
             return;
 
         let tile = this.matrix[x][y];
-        if(tile.placed) {
+
+        if (tile.placed) {
             return;
         }
+
         this.matrix[x][y] = value;
     }
 
-    getValue(x, y){
+    getValue(x, y) {
         return this.matrix[x][y];
     }
 
-    render(s){
+    render(s) {
         for (let i = 0; i < this.width; i++) {
-            for(let j = 0; j < this.height; j++){
+            for (let j = 0; j < this.height; j++) {
 
-                let tile = this.getValue(i,j);
+                let tile = this.getValue(i, j);
                 let v = tile.value;
 
-                if(tile.placed)
+                if (tile.placed)
                     continue;
 
                 push();
 
-                translate(i*s+s/2, j*s+s/2);
-               
-              
+                translate(i * s + s / 2, j * s + s / 2);
 
-                if(tile.placed){
-                    if(tile.rotation)
-                        rotate(rotation);
-                    image(tileImages[v], 0, 0, s,s); 
-                }else {
-
-                    if(v === '+'){
-                        fill(40,230,70);        
-                        rect(0, 0, s,s);          
-                    }
-                    else if(v === '0') {
-                        fill(75);
-                        rect(0, 0, s,s); 
-                    }
-                    else {
-                        if(rotation != 0)
-                            rotate(rotation);
-                        image(tileImages[v],0, 0, s,s);  
-                    }
-                         
+                if (v === '0') {
+                    fill(75);
+                    rect(0, 0, s, s);
                 }
-                
+                else {
+                    if (rotation != 0)
+                        rotate(rotation * TWO_PI/4);
+                    noStroke();
+                    image(tileImages[v], 0, 0, s, s);
+                }
+
                 pop();
-            }
-        }   
+
+            }           
+        }
+    }
+
+    getAdjacent(x,y){
+        var adjacentTiles = [];
+         
+        if(x > 0)
+            adjacentTiles.push(this.matrix[x-1][y]);
+          
+        if(y > 0)
+            adjacentTiles.push(this.matrix[x][y-1]);
+        
+        if(y < this.height)
+            adjacentTiles.push(this.matrix[x][y+1]);
+       
+        if(x < this.width)
+            adjacentTiles.push(this.matrix[x+1][y]);
+        
+        return adjacentTiles.filter(t => t.value !== '0');
     }
 }
