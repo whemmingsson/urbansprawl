@@ -2,18 +2,14 @@ class Grid {
     constructor(width, height) {
         this.height = height;
         this.width = width;
-        this.matrix = utils.create2DArray(width, height, { value: '0', placed: false });
+        this.matrix = utils.create2DArray(width, height, null);
     }
-
-   
 
     setValue(x, y, value) {
         if (x >= this.width || y >= this.width || x < 0 || y < 0)
             return;
 
-        let tile = this.matrix[x][y];
-
-        if (tile.placed) {
+        if (this.matrix[x][y] !== null && this.matrix[x][y] !== undefined && this.matrix[x][y].placed) {
             return;
         }
 
@@ -24,21 +20,52 @@ class Grid {
         return this.matrix[x][y];
     }
 
+    canPlace(x, y){
+        let failedConnections = [];
+        let tileConnections = this.getValue(x,y).connections;
+
+        let allMatch = true;
+        this.getAdjacent(x,y).forEach(adjTile => {
+            let adjConnections = adjTile.tile.connections;
+            let direction = adjTile.direction;
+
+            if(!this.makesCorrectConnection(direction, tileConnections, adjConnections)){
+                failedConnections.push(direction);
+                allMatch = false;
+            }
+        });
+
+        if(allMatch)
+            return allMatch;
+        else
+            return failedConnections;
+    }
+
+    makesCorrectConnection(l, tCons, aCons){
+        let tCon = tCons[l];
+        let aCon = aCons[utils.getOppositeDirection(l)];
+
+        // TODO: Fix this, somehow
+        if((aCon == 'citycenter' || aCon == 'cityedge' || aCon == 'city') && (tCon == 'citycenter' || tCon == 'cityedge' || tCon == 'city'))
+            return true;
+
+        return tCon === aCon;
+    }
+
     render(s) {
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
 
                 let tile = this.getValue(i, j);
-                let v = tile.value;
 
-                if (tile.placed)
+                if ((tile !== null && tile !== undefined) && tile.placed)
                     continue;
 
                 push();
 
                 translate(i * s + s / 2, j * s + s / 2);
 
-                if (v === '0') {
+                if (tile === null) {
                     fill(75);
                     rect(0, 0, s, s);
                 }
@@ -46,7 +73,7 @@ class Grid {
                     if (rotation != 0)
                         rotate(rotation * TWO_PI/4);
                     noStroke();
-                    image(tileImages[v], 0, 0, s, s);
+                    image(tileImages[tile.id], 0, 0, s, s);
                 }
 
                 pop();
@@ -59,17 +86,17 @@ class Grid {
         var adjacentTiles = [];
          
         if(x > 0)
-            adjacentTiles.push(this.matrix[x-1][y]);
+            adjacentTiles.push({tile: this.matrix[x-1][y], direction : utils.directions.WEST});
           
         if(y > 0)
-            adjacentTiles.push(this.matrix[x][y-1]);
+            adjacentTiles.push({tile: this.matrix[x][y-1], direction : utils.directions.NORTH});
         
         if(y < this.height)
-            adjacentTiles.push(this.matrix[x][y+1]);
+            adjacentTiles.push({tile: this.matrix[x][y+1], direction : utils.directions.SOUTH});
        
         if(x < this.width)
-            adjacentTiles.push(this.matrix[x+1][y]);
+            adjacentTiles.push({tile: this.matrix[x+1][y], direction : utils.directions.EAST});
         
-        return adjacentTiles.filter(t => t.value !== '0');
+        return adjacentTiles.filter(t => t !== null && t.tile !== null);
     }
 }

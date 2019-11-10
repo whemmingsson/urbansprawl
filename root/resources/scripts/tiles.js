@@ -55,14 +55,14 @@ let tileDefinitions = [
     count: 3,
     shield:false,
     types: ['cityedge'],
-    connections: { North : 'cityedge', East : 'field', South : 'field', West : 'cityedge'}
+    connections: { North : 'field', East : 'cityedge', South : 'field', West : 'cityedge'}
 },
 {
     id : 'I',
     count: 2,
     shield:false,
     types: ['citycenter'],
-    connections: { North : 'citycenter', East : 'field', South : 'field', West : 'citycenter'}
+    connections: { North : 'field', East : 'citycenter', South : 'citycenter', West : 'field'}
 },
 {
     id : 'J',
@@ -160,13 +160,13 @@ let tileDefinitions = [
     count: 4,
     shield : false,
     types: ['road'],
-    connections: { North : 'field', East : 'field', South : 'road' , West : 'field'}
+    connections: { North : 'field', East : 'road', South : 'road' , West : 'road'}
 },
 {
     id : 'X',
     count: 1,
     shield : false,
     types: ['road'],
-    connections: { North : 'field', East : 'field', South : 'road' , West : 'road'}
+    connections: { North : 'road', East : 'road', South : 'road' , West : 'road'}
 }
 ]
