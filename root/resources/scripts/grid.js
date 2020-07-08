@@ -74,6 +74,11 @@ class Grid {
                         rotate(rotation * TWO_PI/4);
                     noStroke();
                     image(tileImages[tile.id], 0, 0, s, s);
+                    fill(255);
+  
+                    
+                    textSize(32);
+                    text(tile.id,-20,-10);
                 }
 
                 pop();

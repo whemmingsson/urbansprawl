@@ -5,14 +5,14 @@ let tileDefinitions = [
     id : 'A',
     count: 2,
     shield:false,
-    type: ['chapel', 'road'],
+    types: ['chapel', 'road'],
     connections: { North : 'field', East : 'field', South : 'road', West : 'field'}
 },
 {
     id : 'B',
     count: 4,
     shield:false,
-    type: ['chapel'],
+    types: ['chapel'],
     connections: { North : 'field', East : 'field', South : 'field', West : 'field'}
 },
 {
@@ -48,7 +48,7 @@ let tileDefinitions = [
     count: 1,
     shield:false,
     types: ['citycenter'],
-    connections: { North : 'citycenter', East : 'field', South : 'field', West : 'citycenter'}
+    connections: { North : 'citycenter', East : 'field', South : 'citycenter', West : 'field'}
 },
 {
     id : 'H',

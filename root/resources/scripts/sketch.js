@@ -7,6 +7,7 @@ let rotation = 0;
 let currentTilePos = { x: 0, y: 0 };
 let tile;
 let tiles = [];
+let tileIndex = 0;
 
 function preload() {
     loadTilesImages();
@@ -26,19 +27,26 @@ function setup() {
 }
 
 function createTiles(){
+    let counter = 0;
     tileDefinitions.forEach(tileDef => {
         for(let i = 0; i < tileDef.count; i++) {
-            tiles.push(createTile(tileDef));
+            tiles.push(createTile(tileDef, counter));
+            counter++;
         }     
     });
 }
 
-function createTile(tileDef){
+function createTile(tileDef, counter){
     return { 
+        uniqueId: counter,
         id : tileDef.id,
         shield  : tileDef.shield,
-        types  : tileDef.types,
-        connections  : tileDef.connections
+        types  : tileDef.types.map((t)=>t),
+        connections  : { 
+            North : tileDef.connections.North, 
+            East : tileDef.connections.East, 
+            South : tileDef.connections.South, 
+            West : tileDef.connections.West}
     };
 }
 
@@ -47,7 +55,8 @@ function draw() {
 }
 
 function getRandomTile() {
-    let index = utils.getRandom(0, tiles.length);
+    let index = tileIndex++;
+    //let index = utils.getRandom(0, tiles.length);
     let t = tiles[index];
     tiles.splice(index, 1);
     return t;
