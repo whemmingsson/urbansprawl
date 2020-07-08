@@ -7,10 +7,11 @@ let rotation = 0;
 let currentTilePos = { x: 0, y: 0 };
 let tile;
 let tiles = [];
-let tileIndex = 0;
+let tilesPlaced = 0;
 
 function preload() {
     loadTilesImages();
+
 }
 
 function setup() {
@@ -24,6 +25,8 @@ function setup() {
     createTiles();
 
     tile = getRandomTile();
+    //placeFirstTile();
+
 }
 
 function createTiles(){
@@ -38,10 +41,10 @@ function createTiles(){
 
 function createTile(tileDef, counter){
     return { 
-        uniqueId: counter,
+        uniqueId : counter,
         id : tileDef.id,
         shield  : tileDef.shield,
-        types  : tileDef.types.map((t)=>t),
+        types  : tileDef.types.map((t) => t),
         connections  : { 
             North : tileDef.connections.North, 
             East : tileDef.connections.East, 
@@ -55,11 +58,19 @@ function draw() {
 }
 
 function getRandomTile() {
-    let index = tileIndex++;
-    //let index = utils.getRandom(0, tiles.length);
+    //let index = tileIndex++;
+    let index = utils.getRandom(0, tiles.length);
     let t = tiles[index];
     tiles.splice(index, 1);
     return t;
+}
+
+function placeFirstTile(){
+    let t = getRandomTile();
+    t.placed = true;
+
+    grid.setValue(grid.width/2, grid.height/2, t);
+    tile = getRandomTile();
 }
 
 function loadTilesImages() {
@@ -72,6 +83,7 @@ function loadTilesImages() {
             },
             () => console.log("Error loading " + path));
     });
+    
 }
 
 function mouseClicked() {
@@ -85,10 +97,10 @@ function mouseClicked() {
         return;
     }
 
-    let cP = grid.canPlace(currentTilePos.x, currentTilePos.y);
+    let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
 
     if(typeof cP === "boolean" && cP){
-        console.log("Placed tile!");
+        tilesPlaced++;
         rotation = 0;        
         tile.placed = true;
         grid.setValue(currentTilePos.x, currentTilePos.y, tile);

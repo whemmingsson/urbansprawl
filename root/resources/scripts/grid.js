@@ -25,7 +25,12 @@ class Grid {
         let tileConnections = this.getValue(x,y).connections;
 
         let allMatch = true;
-        this.getAdjacent(x,y).forEach(adjTile => {
+        let adjacent = this.getAdjacent(x,y);
+
+        if(adjacent.length === 0)
+            return failedConnections;
+
+        adjacent.forEach(adjTile => {
             let adjConnections = adjTile.tile.connections;
             let direction = adjTile.direction;
 
@@ -46,7 +51,7 @@ class Grid {
         let aCon = aCons[utils.getOppositeDirection(l)];
 
         // TODO: Fix this, somehow
-        if((aCon == 'citycenter' || aCon == 'cityedge' || aCon == 'city') && (tCon == 'citycenter' || tCon == 'cityedge' || tCon == 'city'))
+        if(aCon.indexOf("city") >= 0 && tCon.indexOf("city") >= 0)
             return true;
 
         return tCon === aCon;
