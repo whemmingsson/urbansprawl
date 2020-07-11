@@ -29,12 +29,16 @@ let utils = {
             tile.connections.South = e;
             tile.connections.West = s;
             tile.connections.North = w;
+
+            tile.rotation += 1;
         }
         else {
             tile.connections.East = s;
             tile.connections.South = w;
             tile.connections.West = n;
             tile.connections.North = e;
+
+            tile.rotation -= 1;
         }
     },
 
