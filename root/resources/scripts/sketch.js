@@ -28,7 +28,6 @@ function setup() {
     createTiles();
 
     tile = getRandomTile();
-    //placeFirstTile();
 }
 
 function createTiles() {
@@ -98,8 +97,6 @@ function clearInvalidConnectionTiles() {
 }
 
 function checkForInvalidConnections() {
-
-
     let t = grid.getValue(currentTilePos.x, currentTilePos.y)
 
     if (t != undefined && t != null && t.placed) {
@@ -140,13 +137,6 @@ function handlePlacingOfTile() {
         tile = getRandomTile();
         tilesPlaced++;
     }
-    // else if (cP.length > 0) {
-    //     cP.forEach(adjTile => {
-    //         console.log(adjTile);
-    //         adjTile.tile.invalidConnection = true;
-    //         invalidConnectionTiles.push(adjTile.tile);
-    //     });
-    // }
 }
 
 
