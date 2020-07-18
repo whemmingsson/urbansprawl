@@ -1,5 +1,3 @@
-// Contains the tile definitions
-
 let tileDefinitions = [ 
 {
     id : 'A',

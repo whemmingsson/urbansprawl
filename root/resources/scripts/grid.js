@@ -9,9 +9,8 @@ class Grid {
         if (x >= this.width || y >= this.width || x < 0 || y < 0)
             return;
 
-        if (this.matrix[x][y] !== null && this.matrix[x][y] !== undefined && this.matrix[x][y].placed) {
+        if (this.matrix[x][y] !== null && this.matrix[x][y] !== undefined && this.matrix[x][y].placed)
             return;
-        }
 
         this.matrix[x][y] = value;
     }
@@ -51,8 +50,10 @@ class Grid {
     makesCorrectConnection(l, tCons, aCons) {
         if(tCons.length === 0)
             return false;
+
         let tCon = tCons[l];
         let aCon = aCons[utils.getOppositeDirection(l)];
+
         return aCon.indexOf("city") >= 0 && tCon.indexOf("city") >= 0 || tCon === aCon;
     }
 
@@ -63,26 +64,25 @@ class Grid {
 
                 push();
 
-                translate(i * s + s / 2, j * s + s / 2);
+                    translate(i * s + s / 2, j * s + s / 2);
 
-                let tile = this.getValue(i, j);
+                    let tile = this.getValue(i, j);
 
-                fill(75);
-                rect(0, 0, s, s);
-
-                if (tile != null) {
-                    if (tile.rotation != 0) {
-                        rotate(tile.rotation * TWO_PI / 4);
-                    }
-                
-                    image(tileImages[tile.label], 0, 0, s, s);
-                }
-
-                if (tile !== null && tile.placed && tile.invalidConnection) {
-                    noStroke();
-                    fill(240, 20, 20, 100);
+                    fill(75);
                     rect(0, 0, s, s);
-                }
+
+                    if (tile != null) {
+                        if (tile.rotation != 0) 
+                            rotate(tile.rotation * TWO_PI / 4);
+                                 
+                        image(tileImages[tile.label], 0, 0, s, s);
+                    }
+
+                    if (tile !== null && tile.placed && tile.invalidConnection) {
+                        noStroke();
+                        fill(240, 20, 20, 100);
+                        rect(0, 0, s, s);
+                    }
 
                 pop();
             }

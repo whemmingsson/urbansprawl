@@ -10,6 +10,7 @@ let tile;
 let tiles = [];
 let tilesPlaced = 0;
 let invalidConnectionTiles = [];
+let gameOver = false;
 
 function preload() {
     loadTilesImages();
@@ -58,10 +59,18 @@ function createTile(tileDef, counter) {
 }
 
 function draw() {
+    if (gameOver)
+        return;
+
     grid.render(size);
 }
 
 function getRandomTile() {
+    if (tiles.length == 0) {
+        gameOver = true;
+        return;
+    }
+
     let index = utils.getRandom(0, tiles.length);
     let t = tiles[index];
     tiles.splice(index, 1);
@@ -99,22 +108,25 @@ function clearInvalidConnectionTiles() {
 function checkForInvalidConnections() {
     let t = grid.getValue(currentTilePos.x, currentTilePos.y)
 
-    if (t != undefined && t != null && t.placed) {
+    if ((t != undefined && t != null && t.placed))
+        return;
 
-    }
-    else {
-        let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
-        if (cP.length > 0) {
-            cP.forEach(adjTile => {
-                console.log(adjTile);
-                adjTile.tile.invalidConnection = true;
-                invalidConnectionTiles.push(adjTile.tile);
-            });
-        }
-    }
+    let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
+
+    if (cP.length === 0)
+        return;
+
+    cP.forEach(adjTile => {
+        console.log(adjTile);
+        adjTile.tile.invalidConnection = true;
+        invalidConnectionTiles.push(adjTile.tile);
+    });
 }
 
 function mouseClicked() {
+    if (gameOver)
+        return;
+
     handlePlacingOfTile();
 }
 
@@ -141,6 +153,9 @@ function handlePlacingOfTile() {
 
 
 function mouseMoved() {
+    if (gameOver)
+        return;
+
     if (mouseX > width || mouseX < 0 || mouseY > height || mouseY < 0)
         return;
 
@@ -148,7 +163,6 @@ function mouseMoved() {
     let y = Math.floor(mouseY / size);
 
     if (currentTilePos.x != x || currentTilePos.y != y) {
-        // Current tile is another one
         grid.setValue(currentTilePos.x, currentTilePos.y, null);
         clearInvalidConnectionTiles();
     }
@@ -161,6 +175,9 @@ function mouseMoved() {
 }
 
 function keyTyped() {
+    if (gameOver)
+        return;
+
     if (key === 'a') {
         utils.rotateTile(tile, false);
     } else if (key === 'd') {
