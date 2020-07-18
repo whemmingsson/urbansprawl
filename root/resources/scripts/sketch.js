@@ -42,20 +42,7 @@ function createTiles() {
 }
 
 function createTile(tileDef, counter) {
-    return {
-        id: counter,
-        label: tileDef.id,
-        shield: tileDef.shield,
-        types: tileDef.types.map((t) => t),
-        connections: {
-            North: tileDef.connections.North,
-            East: tileDef.connections.East,
-            South: tileDef.connections.South,
-            West: tileDef.connections.West
-        },
-        invalidConnection: false,
-        rotation: 0
-    };
+    return new Tile(counter, tileDef);
 }
 
 function draw() {
@@ -113,11 +100,10 @@ function checkForInvalidConnections() {
 
     let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
 
-    if (cP.length === 0)
+    if (cP.length === 0 || typeof cP === "boolean")
         return;
 
     cP.forEach(adjTile => {
-        console.log(adjTile);
         adjTile.tile.invalidConnection = true;
         invalidConnectionTiles.push(adjTile.tile);
     });
