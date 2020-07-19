@@ -47,69 +47,49 @@ class Grid {
     }
 
     completesRoad(tile) {
+        if(tilesPlaced == 1)
+            return false;
+
         const visited = [];
-        const result = this.completesRoadRecursive(tile, visited);
-        console.log(result);
+        let foundCompletedRoad = false;
+
+        if(tile.hasRoadEnd){
+            tile.nodes.forEach(node => {
+                if(this.completesRoadRecursive(node, visited)) {
+                    foundCompletedRoad = true;
+                    console.log("COMPLETED ROAD");
+                }
+            });
+        }
+        else if(tile.hasRoad()){
+            if(this.completesRoadRecursive(tile.nodes[0], visited)) {
+                foundCompletedRoad = true;
+                console.log("COMPLETED ROAD");
+            }
+        }
 
         visited.forEach(t => {
             t.visited = false;
         });
 
-        return result;
+        return foundCompletedRoad;
     }
 
-    completesRoadRecursive(tile, visited) {
-        if (!tile.hasRoad())
+    completesRoadRecursive(node, visited) {
+        console.log("INSPECTING NODE: " + node.id);
+
+        node.visited = true;
+        visited.push(node);
+
+        if(node.isDeadEnd())
             return false;
 
-         console.log("INSPECTING TILE: " + tile.id);
+        node.adjacent.filter(n => {return !n.visited;}).forEach(adjNode => {
+            return this.completesRoadRecursive(adjNode, visited);
+        });
 
-        // "Wander" the road to find out if all end tiles has "roadend"
-        const roadConnections = [];
-        const roadEndConnections = [];
-
-        let currentTile = tile;
-        for (const p in currentTile.connections) {
-            const connectionType = currentTile.connections[p];
-            const connection = { Direction: p, Type: connectionType };
-            if (connectionType.indexOf("roadend") >= 0)
-                roadEndConnections.push(connection);
-            else if (connectionType.indexOf("road") >= 0)
-                roadConnections.push(connection);
-        }
-
-        console.log("Roads: "); console.log(roadConnections);
-        console.log("Ends: "); console.log(roadEndConnections);
-
-        // The tile placed was A, L, S,T,W or X
-        // We are at the end of one road, so follow each road to see if any ends
-        if (roadEndConnections.length > 0) {
-            roadEndConnections.forEach(con => {
-                const adj = this.getAdjecentInDirection(currentTile.x, currentTile.y, con.Direction);
-                console.log(adj);
-                if(adj !== null && !adj.visited){
-                    currentTile.visited = true;
-                    visited.push(currentTile);
-                    this.completesRoadRecursive(adj, visited);
-                }
-               
-            });
-        }
-
-        // The tile placed was D, J, K, O, P, U or V
-        // We are in a middle of the road, follow all connections to see if ALL ends. 
-        if (roadConnections.length > 0) {
-            roadConnections.forEach(con => {
-                const adj = this.getAdjecentInDirection(currentTile.x, currentTile.y, con.Direction);
-                console.log(adj);
-                if(adj !== null && !adj.visited){
-                    currentTile.visited = true;
-                    visited.push(currentTile);
-                    this.completesRoadRecursive(adj, visited);
-                }
-               
-            });
-        }       
+        return true;
+              
     }
 
     makesCorrectConnection(l, tCons, aCons) {

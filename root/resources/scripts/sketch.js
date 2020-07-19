@@ -134,6 +134,9 @@ function mouseClicked() {
             });
 
             roadMap.push(...nodesForTile);
+
+            // Check if the road is completed
+            let roadCompleted = grid.completesRoad(placedTile);
         }       
     }
 }
