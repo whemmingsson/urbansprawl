@@ -113,7 +113,11 @@ function mouseClicked() {
     if (gameOver)
         return;
 
-    handlePlacingOfTile();
+    let placedTile = handlePlacingOfTile();
+
+    if(placedTile !== undefined){
+        grid.completesRoad(placedTile);
+    }
 }
 
 function handlePlacingOfTile() {
@@ -130,10 +134,13 @@ function handlePlacingOfTile() {
     let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
 
     if (typeof cP === "boolean" && cP) {
+        let placedTile = tile;
         tile.placed = true;
+        tile.setLocationInGrid(currentTilePos.x, currentTilePos.y);
         grid.setValue(currentTilePos.x, currentTilePos.y, tile);
         tile = getRandomTile();
         tilesPlaced++;
+        return placedTile;
     }
 }
 

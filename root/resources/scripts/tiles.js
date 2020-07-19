@@ -4,7 +4,7 @@ let tileDefinitions = [
     count: 2,
     shield:false,
     types: ['chapel', 'road'],
-    connections: { North : 'field', East : 'field', South : 'road', West : 'field'}
+    connections: { North : 'field', East : 'field', South : 'roadend', West : 'field'}
 },
 {
     id : 'B',
@@ -81,7 +81,7 @@ let tileDefinitions = [
     count: 3,
     shield:false,
     types: ['cityedge', 'road'],
-    connections: { North : 'road', East : 'cityedge', South : 'road' , West : 'road'}
+    connections: { North : 'roadend', East : 'cityedge', South : 'roadend' , West : 'roadend'}
 },
 {
     id : 'M',
@@ -130,14 +130,14 @@ let tileDefinitions = [
     count: 2,
     shield : true,
     types: ['city', 'road'],
-    connections: { North : 'city', East : 'city', South : 'road' , West : 'city'}
+    connections: { North : 'city', East : 'city', South : 'roadend' , West : 'city'}
 },
 {
     id : 'T',
     count: 1,
     shield : false,
     types: ['city', 'road'],
-    connections: { North : 'city', East : 'city', South : 'road' , West : 'city'}
+    connections: { North : 'city', East : 'city', South : 'roadend' , West : 'city'}
 },
 {
     id : 'U',
@@ -158,13 +158,13 @@ let tileDefinitions = [
     count: 4,
     shield : false,
     types: ['road'],
-    connections: { North : 'field', East : 'road', South : 'road' , West : 'road'}
+    connections: { North : 'field', East : 'roadend', South : 'roadend' , West : 'roadend'}
 },
 {
     id : 'X',
     count: 1,
     shield : false,
     types: ['road'],
-    connections: { North : 'road', East : 'road', South : 'road' , West : 'road'}
+    connections: { North : 'roadend', East : 'roadend', South : 'roadend' , West : 'roadend'}
 }
 ]

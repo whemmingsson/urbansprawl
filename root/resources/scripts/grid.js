@@ -20,13 +20,12 @@ class Grid {
     }
 
     canPlace(x, y) {
-        let failedConnections = [];
-        let currentTile = this.getValue(x, y);
-
-        let tileConnections = currentTile !== null ? currentTile.connections : [];
+        const failedConnections = [];
+        const currentTile = this.getValue(x, y);
+        const tileConnections = currentTile !== null ? currentTile.connections : [];
+        const adjacent = this.getAdjacent(x, y);
 
         let allMatch = true;
-        let adjacent = this.getAdjacent(x, y);
 
         if (adjacent.length === 0)
             return failedConnections;
@@ -47,14 +46,74 @@ class Grid {
             return failedConnections;
     }
 
-    makesCorrectConnection(l, tCons, aCons) {
-        if(tCons.length === 0)
+    completesRoad(tile) {
+        const visited = [];
+        const result = this.completesRoadRecursive(tile, visited);
+
+        visited.forEach(t => {
+            t.visited = false;
+        });
+
+        return result;
+    }
+
+    completesRoadRecursive(tile, visited) {
+        if (!tile.hasRoad())
             return false;
 
-        let tCon = tCons[l];
-        let aCon = aCons[utils.getOppositeDirection(l)];
+            console.log("INSPECTING TILE: " + tile.id);
 
-        return aCon.indexOf("city") >= 0 && tCon.indexOf("city") >= 0 || tCon === aCon;
+        // "Wander" the road to find out if all end tiles has "roadend"
+        const roadConnections = [];
+        const roadEndConnections = [];
+
+        let currentTile = tile;
+        for (const p in currentTile.connections) {
+            const connectionType = currentTile.connections[p];
+            const connection = { Direction: p, Type: connectionType };
+            if (connectionType.indexOf("roadend") >= 0)
+                roadEndConnections.push(connection);
+            else if (connectionType.indexOf("road") >= 0)
+                roadConnections.push(connection);
+        }
+
+        console.log("Roads: "); console.log(roadConnections);
+        console.log("Ends: "); console.log(roadEndConnections);
+
+        // The tile placed was A, L, S,T,W or X
+        // We are at the end of one road, so follow each road to see if any ends
+        if (roadEndConnections.length > 0) {
+            roadEndConnections.forEach(con => {
+                const adj = this.getAdjecentInDirection(currentTile.x, currentTile.y, con.Direction);
+                console.log(adj);
+                if(adj !== null){
+                    currentTile.visited = true;
+                    visited.push(currentTile);
+                    this.completesRoadRecursive(adj, visited);
+                }
+               
+            });
+        }
+
+        // The tile placed was D, J, K, O, P, U or V
+        // We are in a middle of the road, follow all connections to see if ALL ends. 
+        if (roadConnections.length > 0) {
+
+        }
+
+        
+    }
+
+    makesCorrectConnection(l, tCons, aCons) {
+        if (tCons.length === 0)
+            return false;
+
+        const tCon = tCons[l];
+        const aCon = aCons[utils.getOppositeDirection(l)];
+
+        return aCon.indexOf("city") >= 0 && tCon.indexOf("city") >= 0
+            || aCon.indexOf("road") >= 0 && tCon.indexOf("road") >= 0
+            || tCon === aCon;
     }
 
     render(s) {
@@ -64,25 +123,17 @@ class Grid {
 
                 push();
 
-                    translate(i * s + s / 2, j * s + s / 2);
+                translate(i * s + s / 2, j * s + s / 2);
 
-                    let tile = this.getValue(i, j);
+                const tile = this.getValue(i, j);
 
+                if (tile !== null) {
+                    tile.render(s);
+                }
+                else {
                     fill(75);
                     rect(0, 0, s, s);
-
-                    if (tile != null) {
-                        if (tile.rotation != 0) 
-                            rotate(tile.rotation * TWO_PI / 4);
-                                 
-                        image(tileImages[tile.label], 0, 0, s, s);
-                    }
-
-                    if (tile !== null && tile.placed && tile.invalidConnection) {
-                        noStroke();
-                        fill(240, 20, 20, 100);
-                        rect(0, 0, s, s);
-                    }
+                }
 
                 pop();
             }
@@ -90,7 +141,7 @@ class Grid {
     }
 
     getAdjacent(x, y) {
-        var adjacentTiles = [];
+        const adjacentTiles = [];
 
         if (x > 0)
             adjacentTiles.push({ tile: this.matrix[x - 1][y], direction: utils.directions.WEST });
@@ -105,5 +156,25 @@ class Grid {
             adjacentTiles.push({ tile: this.matrix[x + 1][y], direction: utils.directions.EAST });
 
         return adjacentTiles.filter(t => t !== null && t.tile !== null);
+    }
+
+    getAdjecentInDirection(x, y, direction) {
+        switch (direction) {
+            case utils.directions.WEST:
+                if (x > 0) return this.matrix[x - 1][y];
+                else break;
+            case utils.directions.NORTH:
+                if (y > 0) return this.matrix[x][y - 1];
+                else break;
+            case utils.directions.SOUTH:
+                if (y < this.height) return this.matrix[x][y + 1];
+                else break;
+            case utils.directions.EAST:
+                if (x < this.width) return this.matrix[x + 1][y];
+                else break;
+        }
+
+        return null;
+
     }
 }
