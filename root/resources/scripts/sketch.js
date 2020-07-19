@@ -1,16 +1,20 @@
+const MIN_SIZE = 40;
+const MAX_SIZE = 150;
+const canvasWidth = 1400;
+const canvasHeight = 1000;
+const tiles = [];
+
+
+let currentTilePos = { x: 0, y: 0 };
+let invalidConnectionTiles = [];
+let gameOver = false;
+let tile;
 let tileImages = new Object();
 let grid;
 let size = 40;
-const MIN_SIZE = 40;
-const MAX_SIZE = 150;
-let canvasWidth = 1400;
-let canvasHeight = 1000;
-let currentTilePos = { x: 0, y: 0 };
-let tile;
-let tiles = [];
 let tilesPlaced = 0;
-let invalidConnectionTiles = [];
-let gameOver = false;
+
+const roadMap = [];
 
 function preload() {
     loadTilesImages();
@@ -58,14 +62,14 @@ function getRandomTile() {
         return;
     }
 
-    let index = utils.getRandom(0, tiles.length);
-    let t = tiles[index];
+    const index = utils.getRandom(0, tiles.length);
+    const t = tiles[index];
     tiles.splice(index, 1);
     return t;
 }
 
 function placeFirstTile() {
-    let t = getRandomTile();
+    const t = getRandomTile();
     t.placed = true;
 
     grid.setValue(grid.width / 2, grid.height / 2, t);
@@ -74,8 +78,8 @@ function placeFirstTile() {
 
 function loadTilesImages() {
     tileDefinitions.forEach(t => {
-        let path = "resources/images/" + t.id + ".png";
-        let img = loadImage(path,
+        const path = "resources/images/" + t.id + ".png";
+        const img = loadImage(path,
             () => {
                 console.log("Finished loading " + path);
                 tileImages[t.id] = img;
@@ -93,12 +97,12 @@ function clearInvalidConnectionTiles() {
 }
 
 function checkForInvalidConnections() {
-    let t = grid.getValue(currentTilePos.x, currentTilePos.y)
+    const t = grid.getValue(currentTilePos.x, currentTilePos.y)
 
     if ((t != undefined && t != null && t.placed))
         return;
 
-    let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
+    const cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
 
     if (cP.length === 0 || typeof cP === "boolean")
         return;
@@ -113,10 +117,24 @@ function mouseClicked() {
     if (gameOver)
         return;
 
-    let placedTile = handlePlacingOfTile();
+    const placedTile = handlePlacingOfTile();
 
-    if(placedTile !== undefined){
-        grid.completesRoad(placedTile);
+    if (placedTile !== undefined) {
+        if(placedTile.hasRoad()) {
+            const nodesForTile = placedTile.setupAndReturnNodes();    
+                     
+            nodesForTile.forEach(tileNode => {
+                const oppositeTileNodeDirection = utils.getOppositeDirection(tileNode.direction);
+                grid.getAdjacent(currentTilePos.x, currentTilePos.y).forEach(adjTile => {
+                    adjTile.tile.nodes.forEach(adjNode => {
+                        if(adjNode.direction === oppositeTileNodeDirection)
+                            tileNode.connectTo(adjNode);
+                    });
+                });
+            });
+
+            roadMap.push(...nodesForTile);
+        }       
     }
 }
 
@@ -124,17 +142,17 @@ function handlePlacingOfTile() {
     if (mouseX > width || mouseX < 0 || mouseY > height || mouseY < 0)
         return;
 
-    let t = grid.getValue(currentTilePos.x, currentTilePos.y)
+    const t = grid.getValue(currentTilePos.x, currentTilePos.y)
 
     if (t != undefined && t != null && t.placed) {
         console.log(t);
         return;
     }
 
-    let cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
+    const cP = tilesPlaced == 0 ? true : grid.canPlace(currentTilePos.x, currentTilePos.y);
 
     if (typeof cP === "boolean" && cP) {
-        let placedTile = tile;
+        const placedTile = tile;
         tile.placed = true;
         tile.setLocationInGrid(currentTilePos.x, currentTilePos.y);
         grid.setValue(currentTilePos.x, currentTilePos.y, tile);
@@ -152,8 +170,8 @@ function mouseMoved() {
     if (mouseX > width || mouseX < 0 || mouseY > height || mouseY < 0)
         return;
 
-    let x = Math.floor(mouseX / size);
-    let y = Math.floor(mouseY / size);
+    const x = Math.floor(mouseX / size);
+    const y = Math.floor(mouseY / size);
 
     if (currentTilePos.x != x || currentTilePos.y != y) {
         grid.setValue(currentTilePos.x, currentTilePos.y, null);

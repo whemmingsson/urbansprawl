@@ -16,6 +16,7 @@ class Tile {
         // For placed tiles
         this.x = -1;
         this.y = -1;
+        this.nodes = []; // Associated nodes with this tile. For roads only.
 
         // FOR TESTING
         this.visited = false;
@@ -25,11 +26,35 @@ class Tile {
             if (this.connections[p].indexOf("roadend") >= 0)
                 this.hasRoadEnd = true;
         }
+
     }
 
-    setLocationInGrid(x,y){
+    setLocationInGrid(x, y) {
         this.x = x;
         this.y = y;
+    }
+
+    setupAndReturnNodes() {
+        for (const p in this.connections) {
+            if(this.connections[p].indexOf("road") >= 0)
+                this.nodes.push(new Node(this.id + "_" + p, p, this.connections[p] === "roadend"));
+        }
+
+        const roadNodes = this.nodes.filter(n => {return !n.leafNode});
+
+        if(roadNodes.length === 0)
+            return this.nodes;
+
+        for(let i = 0; i < roadNodes.length; i++){
+            for(let j = 0; j < roadNodes.length; j++){
+                if(i === j)
+                    continue;
+                
+                roadNodes[i].adjacent.push(roadNodes[j]);
+            }
+        }
+        
+        return this.nodes;
     }
 
     hasRoad() {
@@ -54,17 +79,20 @@ class Tile {
         }
 
         // FOR TESTING
-        if(this.placed && this.hasRoadEnd){
+        if (this.placed && this.hasRoadEnd) {
             noStroke();
             fill(40, 20, 220, 150);
             ellipse(0, 0, s);
         }
 
         // FOR TESTING
-        if(this.placed && this.visited){
+        if (this.placed && this.visited) {
             noStroke();
             fill(40, 240, 50, 150);
-            ellipse(0, 0, s-10);
+            ellipse(0, 0, s - 10);
         }
+
+        fill(255);
+        text(this.id, 0, 0);
     }
 }

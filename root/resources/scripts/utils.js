@@ -49,5 +49,7 @@ let utils = {
             case utils.directions.WEST: return utils.directions.EAST;
             case utils.directions.EAST: return utils.directions.WEST;
         }
+
+        return null;
     }
 }

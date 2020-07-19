@@ -49,6 +49,7 @@ class Grid {
     completesRoad(tile) {
         const visited = [];
         const result = this.completesRoadRecursive(tile, visited);
+        console.log(result);
 
         visited.forEach(t => {
             t.visited = false;
@@ -61,7 +62,7 @@ class Grid {
         if (!tile.hasRoad())
             return false;
 
-            console.log("INSPECTING TILE: " + tile.id);
+         console.log("INSPECTING TILE: " + tile.id);
 
         // "Wander" the road to find out if all end tiles has "roadend"
         const roadConnections = [];
@@ -86,7 +87,7 @@ class Grid {
             roadEndConnections.forEach(con => {
                 const adj = this.getAdjecentInDirection(currentTile.x, currentTile.y, con.Direction);
                 console.log(adj);
-                if(adj !== null){
+                if(adj !== null && !adj.visited){
                     currentTile.visited = true;
                     visited.push(currentTile);
                     this.completesRoadRecursive(adj, visited);
@@ -98,10 +99,17 @@ class Grid {
         // The tile placed was D, J, K, O, P, U or V
         // We are in a middle of the road, follow all connections to see if ALL ends. 
         if (roadConnections.length > 0) {
-
-        }
-
-        
+            roadConnections.forEach(con => {
+                const adj = this.getAdjecentInDirection(currentTile.x, currentTile.y, con.Direction);
+                console.log(adj);
+                if(adj !== null && !adj.visited){
+                    currentTile.visited = true;
+                    visited.push(currentTile);
+                    this.completesRoadRecursive(adj, visited);
+                }
+               
+            });
+        }       
     }
 
     makesCorrectConnection(l, tCons, aCons) {
