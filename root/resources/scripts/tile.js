@@ -78,7 +78,30 @@ class Tile {
             rect(0, 0, s, s);
         }
 
+        if (this.rotation != 0)
+            rotate(-this.rotation * TWO_PI / 4);
+
         fill(255);
         text(this.id, 0, 0);
+
+        this.renderNodes(s);
+    }
+
+    renderNodes(s){
+        const nodeWidth = s/3;
+
+        this.nodes.forEach(node => {       
+            if(node.partOfCompletedStructure)
+                fill(25,220,50);
+            else
+                fill(252, 232, 3);
+
+            switch(node.direction){
+                case utils.directions.NORTH: ellipse(0, -20, nodeWidth); break;
+                case utils.directions.EAST: ellipse(20, 0, nodeWidth); break;
+                case utils.directions.SOUTH: ellipse(0, 20, nodeWidth); break;
+                case utils.directions.WEST: ellipse(-20, 0, nodeWidth); break;
+            }
+        });
     }
 }

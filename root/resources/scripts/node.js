@@ -7,6 +7,7 @@ class Node {
 
         this.visited = false;
         this.partOfCompletedStructure = false;
+        this.partOfPartialRoad = false;
     }
 
     connectTo(node){
@@ -15,6 +16,6 @@ class Node {
     }
 
     isDeadEnd(){
-        return !this.isLeafNode && this.adjacent.filter(adj => {return !adj.visited;}).length === 0;
+        return !this.leafNode && this.adjacent.every(adj => {return adj.visited;});
     }
 }

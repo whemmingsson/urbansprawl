@@ -46,51 +46,7 @@ class Grid {
             return failedConnections;
     }
 
-    completesRoad(tile) {
-        if(tilesPlaced == 1)
-            return false;
 
-        const visited = [];
-        let foundCompletedRoad = false;
-
-        if(tile.hasRoadEnd){
-            tile.nodes.forEach(node => {
-                if(this.completesRoadRecursive(node, visited)) {
-                    foundCompletedRoad = true;
-                    console.log("COMPLETED ROAD");
-                }
-            });
-        }
-        else if(tile.hasRoad()){
-            if(this.completesRoadRecursive(tile.nodes[0], visited)) {
-                foundCompletedRoad = true;
-                console.log("COMPLETED ROAD");
-            }
-        }
-
-        visited.forEach(t => {
-            t.visited = false;
-        });
-
-        return foundCompletedRoad;
-    }
-
-    completesRoadRecursive(node, visited) {
-        console.log("INSPECTING NODE: " + node.id);
-
-        node.visited = true;
-        visited.push(node);
-
-        if(node.isDeadEnd())
-            return false;
-
-        node.adjacent.filter(n => {return !n.visited;}).forEach(adjNode => {
-            return this.completesRoadRecursive(adjNode, visited);
-        });
-
-        return true;
-              
-    }
 
     makesCorrectConnection(l, tCons, aCons) {
         if (tCons.length === 0)

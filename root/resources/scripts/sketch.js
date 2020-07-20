@@ -127,7 +127,8 @@ function mouseClicked() {
                 const oppositeTileNodeDirection = utils.getOppositeDirection(tileNode.direction);
                 grid.getAdjacent(currentTilePos.x, currentTilePos.y).forEach(adjTile => {
                     adjTile.tile.nodes.forEach(adjNode => {
-                        if(adjNode.direction === oppositeTileNodeDirection && adjTile.direction === tileNode.direction)
+                        if(adjNode.direction === oppositeTileNodeDirection && 
+                           adjTile.direction === tileNode.direction)
                             tileNode.connectTo(adjNode);
                     });
                 });
@@ -136,9 +137,86 @@ function mouseClicked() {
             roadMap.push(...nodesForTile);
 
             // Check if the road is completed
-            let roadCompleted = grid.completesRoad(placedTile);
+            let roadCompleted = completesRoad(placedTile);
         }       
     }
+}
+
+function completesRoad(tile) {
+    if(tilesPlaced == 1)
+        return false;
+
+    const visited = [];
+    let foundCompletedRoad = false;
+
+    if(tile.hasRoadEnd){
+        tile.nodes.forEach(node => {
+            console.log("Beginning search on node: ", node.id);
+            if(completesRoadRecursive(node, visited)) {
+                foundCompletedRoad = true;
+                node.partOfPartialRoad = true;
+            }
+        });
+    }
+    else if(tile.hasRoad()){
+        let allComplets = false;
+        tile.nodes.forEach(node => {  
+            console.log("Beginning search on node: ", node.id);       
+            if(completesRoadRecursive(node, visited)) {
+                allComplets = true;
+            }
+            else {
+                allComplets = false;
+            }
+
+            if(allComplets){
+                node.partOfPartialRoad = true;
+            }
+        });
+
+        foundCompletedRoad = allComplets;
+    }
+
+    if(foundCompletedRoad){
+        console.log("Completed road");
+    }
+
+    visited.forEach(t => {
+        //t.partOfCompletedStructure = foundCompletedRoad;
+        if(foundCompletedRoad && t.partOfPartialRoad){
+            t.partOfCompletedStructure = true;
+            t.partOfPartialRoad = false;
+        }
+        t.visited = false;
+    });
+
+    return foundCompletedRoad;
+}
+
+function completesRoadRecursive(node, visited) {
+    console.log("Inspecting node: ", node.id );
+    node.visited = true;
+    visited.push(node);
+
+    // if(node.isDeadEnd())
+    //     return false;
+
+    if(node.adjacent.length === 0) // Case: 0 adjacent nodes, no idea to continue
+        return false;
+    
+    const unvisitedAdjacent = node.adjacent.filter(n => {return !n.visited;})
+
+    if(unvisitedAdjacent.length > 0)
+    {
+        unvisitedAdjacent.forEach(adjNode => {
+            adjNode.partOfPartialRoad = true;
+            return completesRoadRecursive(adjNode, visited);
+        });
+    }
+    else if(!node.leafNode)
+        return false;
+    else if(unvisitedAdjacent.length > 0 && node.leafNode)
+        return true;      
 }
 
 function handlePlacingOfTile() {
@@ -189,6 +267,29 @@ function mouseMoved() {
 }
 
 function keyTyped() {
+
+    // DEBUG
+    if (key === 'n') {
+        let td = {
+            id : 'V',
+            count: 9,
+            shield : false,
+            types: ['road'],
+            connections: { North : 'field', East : 'field', South : 'road' , West : 'road'}
+        };
+        tile = createTile(td, tilesPlaced++);
+    }
+    if(key === "l"){
+        let td = {
+            id : 'W',
+            count: 4,
+            shield : false,
+            types: ['road'],
+            connections: { North : 'field', East : 'roadend', South : 'roadend' , West : 'roadend'}
+        }
+        tile = createTile(td, tilesPlaced++);
+    }
+
     if (gameOver)
         return;
 
