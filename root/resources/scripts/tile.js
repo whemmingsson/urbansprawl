@@ -78,20 +78,6 @@ class Tile {
             rect(0, 0, s, s);
         }
 
-        // FOR TESTING
-        if (this.placed && this.hasRoadEnd) {
-            noStroke();
-            fill(40, 20, 220, 150);
-            ellipse(0, 0, s);
-        }
-
-        // FOR TESTING
-        if (this.placed && this.visited) {
-            noStroke();
-            fill(40, 240, 50, 150);
-            ellipse(0, 0, s - 10);
-        }
-
         fill(255);
         text(this.id, 0, 0);
     }
