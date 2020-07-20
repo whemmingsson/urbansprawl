@@ -127,7 +127,7 @@ function mouseClicked() {
                 const oppositeTileNodeDirection = utils.getOppositeDirection(tileNode.direction);
                 grid.getAdjacent(currentTilePos.x, currentTilePos.y).forEach(adjTile => {
                     adjTile.tile.nodes.forEach(adjNode => {
-                        if(adjNode.direction === oppositeTileNodeDirection)
+                        if(adjNode.direction === oppositeTileNodeDirection && adjTile.direction === tileNode.direction)
                             tileNode.connectTo(adjNode);
                     });
                 });
