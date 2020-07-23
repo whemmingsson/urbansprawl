@@ -14,6 +14,15 @@ let grid;
 let size = 40;
 let tilesPlaced = 0;
 
+let xOffset = 0;
+let xPrevious = 0;
+let yOffset = 0;
+let yPrevious = 0;
+let mouseIsDragged = false;
+let xRenderOffset = 0;
+const zoomStrength = 10;
+let toSize;
+
 const roadMap = [];
 
 function preload() {
@@ -29,6 +38,7 @@ function setup() {
     grid = new Grid(canvasWidth / size, canvasHeight / size);
 
     size = 67; // Default render size
+    toSize = size;
 
     createTiles();
 
@@ -52,6 +62,13 @@ function createTile(tileDef, counter) {
 function draw() {
     if (gameOver)
         return;
+
+    if(toSize <= MAX_SIZE) {
+        size = lerp(size, toSize, 0.4); // Smooth zoom
+    }
+    else {
+         toSize = size = MAX_SIZE - 1; 
+    }
 
     grid.render(size);
 }
@@ -251,8 +268,8 @@ function mouseMoved() {
     if (mouseX > width || mouseX < 0 || mouseY > height || mouseY < 0)
         return;
 
-    const x = Math.floor(mouseX / size);
-    const y = Math.floor(mouseY / size);
+    const x = Math.floor((mouseX - xOffset) / size);
+    const y = Math.floor((mouseY - yOffset) / size);
 
     if (currentTilePos.x != x || currentTilePos.y != y) {
         grid.setValue(currentTilePos.x, currentTilePos.y, null);
@@ -264,6 +281,11 @@ function mouseMoved() {
     }
 
     currentTilePos = { x: x, y: y };
+
+    if(!mouseIsPressed) {
+        xPrevious = mouseX;
+        yPrevious = mouseY;
+    }
 }
 
 function keyTyped() {
@@ -304,10 +326,34 @@ function keyTyped() {
 }
 
 function mouseWheel(event) {
-    if (event.delta < 0 && size < MAX_SIZE)
-        size += 1;
-    else if (size > MIN_SIZE)
-        size -= 1;
+    // Zooming in
+    if (event.delta < 0 && size < MAX_SIZE) {
+        //size += zoomStrength;
+        toSize += zoomStrength;
+        //xOffset -= mouseX/size;
+    }
+    // Zooming out
+    else if (size > MIN_SIZE) {
+        //size -= zoomStrength;
+        toSize -= zoomStrength;
+       //
+    }
+
+    
 
     return false;
 }
+
+function mouseDragged(event) {
+    mouseIsDragged = true;
+
+    xOffset += (mouseX - xPrevious);
+    xPrevious = mouseX;
+
+    yOffset += (mouseY - yPrevious);
+    yPrevious = mouseY; 
+  }
+
+  function mouseReleased(event) {
+    mouseIsDragged = false;
+  }

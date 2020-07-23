@@ -63,11 +63,10 @@ class Grid {
     render(s) {
         background(0);
         for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.height; j++) {
-
+            for (let j = 0; j < this.height; j++) {                
                 push();
 
-                translate(i * s + s / 2, j * s + s / 2);
+                translate(i * s + s / 2 + xOffset, j * s + s / 2 + yOffset);
 
                 const tile = this.getValue(i, j);
 
